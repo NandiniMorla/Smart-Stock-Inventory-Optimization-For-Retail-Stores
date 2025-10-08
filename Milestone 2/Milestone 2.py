@@ -1,5 +1,4 @@
-# Milestone 2 - Product-Level Forecasting (Prophet + LSTM + ARIMA)
-# Author: NVS Project
+# Milestone 2 - Product-Level Forecasting 
 
 import pandas as pd
 import numpy as np
@@ -16,9 +15,7 @@ from statsmodels.tsa.arima.model import ARIMA
 
 warnings.filterwarnings("ignore")
 
-# -----------------------------
-# 1. Load Cleaned Data
-# -----------------------------
+#Load Cleaned Data
 df = pd.read_csv("cleaned_retail_sales.csv")
 df['date'] = pd.to_datetime(df['date'])
 
@@ -29,9 +26,8 @@ os.makedirs("plots", exist_ok=True)
 print("✅ Data loaded successfully!")
 print(df.head())
 
-# -----------------------------
-# 2. Helper Functions
-# -----------------------------
+# Helper Functions
+
 def train_lstm(series, n_lags=7, epochs=10):
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaled = scaler.fit_transform(series.values.reshape(-1, 1))
@@ -81,9 +77,8 @@ def safe_mape(y_true, y_pred):
         return np.nan
     return np.mean(np.abs((y_true[mask] - y_pred[mask]) / y_true[mask])) * 100
 
-# -----------------------------
-# 3. Forecasting Loop (Per Product)
-# -----------------------------
+#Forecasting Loop (Per Product)
+
 forecast_list = []
 results_summary = []
 
@@ -170,9 +165,7 @@ for product_id in df['product_id'].unique():
         "Best_Model": best_model
     })
 
-# -----------------------------
-# 4. Save Results
-# -----------------------------
+# Save Results
 forecast_all = pd.concat(forecast_list)
 forecast_all.to_csv("data/product_forecast_results.csv", index=False)
 
@@ -182,9 +175,7 @@ results_df.to_csv("data/product_model_performance.csv", index=False)
 print("\n✅ Forecasts saved in data/product_forecast_results.csv")
 print("✅ Model performance summary saved in data/product_model_performance.csv")
 
-# -----------------------------
-# 5. Save Forecast Plots by Product
-# -----------------------------
+#  Save Forecast Plots by Product
 print("\n📊 Generating and saving forecast plots by product...")
 
 for product_id in df['product_id'].unique():
@@ -208,8 +199,6 @@ for product_id in df['product_id'].unique():
 
 print("✅ All forecast plots saved in 'plots/' folder.")
 
-# -----------------------------
-# 6. Summary Table
-# -----------------------------
+# Summary Table
 print("\n📋 Model Summary (Best Model by Product):")
 print(results_df[['product_id', 'Best_Model']])
